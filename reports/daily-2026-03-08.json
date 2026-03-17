@@ -1,0 +1,91 @@
+{
+  "report_date": "2026-03-08",
+  "period": "daily",
+  "stats": {
+    "total_calls": 10,
+    "total_tokens": 12300,
+    "total_cost": 0.0694,
+    "avg_cost_per_call": 0.006943,
+    "avg_tokens_per_call": 1230
+  },
+  "model_breakdown": [
+    {
+      "model": "opus",
+      "calls": 2,
+      "tokens": 4000,
+      "cost": 0.05,
+      "input_tokens": 2500,
+      "output_tokens": 1500,
+      "avg_cost_per_call": 0.025
+    },
+    {
+      "model": "sonnet",
+      "calls": 2,
+      "tokens": 2400,
+      "cost": 0.0168,
+      "input_tokens": 1600,
+      "output_tokens": 800,
+      "avg_cost_per_call": 0.0084
+    },
+    {
+      "model": "deepseek",
+      "calls": 2,
+      "tokens": 3600,
+      "cost": 0.0018,
+      "input_tokens": 2400,
+      "output_tokens": 1200,
+      "avg_cost_per_call": 0.000924
+    },
+    {
+      "model": "haiku",
+      "calls": 2,
+      "tokens": 900,
+      "cost": 0.0005,
+      "input_tokens": 600,
+      "output_tokens": 300,
+      "avg_cost_per_call": 0.000262
+    },
+    {
+      "model": "gemini",
+      "calls": 2,
+      "tokens": 1400,
+      "cost": 0.0003,
+      "input_tokens": 1000,
+      "output_tokens": 400,
+      "avg_cost_per_call": 0.00013
+    }
+  ],
+  "task_breakdown": [
+    {
+      "task_type": "analysis",
+      "calls": 2,
+      "tokens": 4000,
+      "cost": 0.05
+    },
+    {
+      "task_type": "coding",
+      "calls": 2,
+      "tokens": 2400,
+      "cost": 0.0168
+    },
+    {
+      "task_type": "reasoning",
+      "calls": 2,
+      "tokens": 3600,
+      "cost": 0.0018
+    },
+    {
+      "task_type": "conversation",
+      "calls": 2,
+      "tokens": 900,
+      "cost": 0.0005
+    },
+    {
+      "task_type": "search",
+      "calls": 2,
+      "tokens": 1400,
+      "cost": 0.0003
+    }
+  ],
+  "total_entries": 10
+}

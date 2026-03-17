@@ -1,0 +1,15 @@
+
+🚀 Model Tracker Dashboard running at http://localhost:8081
+   Press Ctrl+C to stop
+
+NotFoundError: Not Found
+    at createHttpError (/home/prad/.openclaw/workspace/model-tracker/node_modules/send/index.js:861:12)
+    at SendStream.error (/home/prad/.openclaw/workspace/model-tracker/node_modules/send/index.js:168:31)
+    at SendStream.pipe (/home/prad/.openclaw/workspace/model-tracker/node_modules/send/index.js:468:14)
+    at sendfile (/home/prad/.openclaw/workspace/model-tracker/node_modules/express/lib/response.js:1014:8)
+    at ServerResponse.sendFile (/home/prad/.openclaw/workspace/model-tracker/node_modules/express/lib/response.js:411:3)
+    at /home/prad/.openclaw/workspace/model-tracker/server.js:125:9
+    at Layer.handleRequest (/home/prad/.openclaw/workspace/model-tracker/node_modules/router/lib/layer.js:152:17)
+    at next (/home/prad/.openclaw/workspace/model-tracker/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/prad/.openclaw/workspace/model-tracker/node_modules/router/lib/route.js:117:3)
+    at handle (/home/prad/.openclaw/workspace/model-tracker/node_modules/router/index.js:435:11)

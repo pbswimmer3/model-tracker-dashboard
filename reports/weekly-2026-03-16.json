@@ -1,0 +1,151 @@
+{
+  "report_date": "2026-03-16",
+  "period": "weekly",
+  "date_range": "2026-03-10 to 2026-03-16",
+  "stats": {
+    "total_calls": 131,
+    "total_tokens": 65696,
+    "total_cost": 3.4497,
+    "avg_cost_per_call": 0.026334,
+    "avg_tokens_per_call": 501
+  },
+  "model_breakdown": [
+    {
+      "model": "sonnet",
+      "calls": 66,
+      "tokens": 21407,
+      "cost": 3.1667,
+      "input_tokens": 931,
+      "output_tokens": 20476,
+      "avg_cost_per_call": 0.04798
+    },
+    {
+      "model": "opus",
+      "calls": 4,
+      "tokens": 2351,
+      "cost": 0.2398,
+      "input_tokens": 1255,
+      "output_tokens": 1096,
+      "avg_cost_per_call": 0.059939
+    },
+    {
+      "model": "kimi",
+      "calls": 56,
+      "tokens": 15649,
+      "cost": 0.0391,
+      "input_tokens": 0,
+      "output_tokens": 15649,
+      "avg_cost_per_call": 0.000699
+    },
+    {
+      "model": "gemini",
+      "calls": 3,
+      "tokens": 24039,
+      "cost": 0.003,
+      "input_tokens": 22965,
+      "output_tokens": 1074,
+      "avg_cost_per_call": 0.000993
+    },
+    {
+      "model": "deepseek",
+      "calls": 1,
+      "tokens": 1800,
+      "cost": 0.0009,
+      "input_tokens": 1200,
+      "output_tokens": 600,
+      "avg_cost_per_call": 0.000924
+    },
+    {
+      "model": "haiku",
+      "calls": 1,
+      "tokens": 450,
+      "cost": 0.0003,
+      "input_tokens": 300,
+      "output_tokens": 150,
+      "avg_cost_per_call": 0.000262
+    }
+  ],
+  "task_breakdown": [
+    {
+      "task_type": "openclaw",
+      "calls": 126,
+      "tokens": 59546,
+      "cost": 3.415
+    },
+    {
+      "task_type": "analysis",
+      "calls": 1,
+      "tokens": 2000,
+      "cost": 0.025
+    },
+    {
+      "task_type": "coding",
+      "calls": 1,
+      "tokens": 1200,
+      "cost": 0.0084
+    },
+    {
+      "task_type": "reasoning",
+      "calls": 1,
+      "tokens": 1800,
+      "cost": 0.0009
+    },
+    {
+      "task_type": "conversation",
+      "calls": 1,
+      "tokens": 450,
+      "cost": 0.0003
+    },
+    {
+      "task_type": "search",
+      "calls": 1,
+      "tokens": 700,
+      "cost": 0.0001
+    }
+  ],
+  "daily_trends": [
+    {
+      "date": "2026-03-10",
+      "calls": 0,
+      "tokens": 0,
+      "cost": 0
+    },
+    {
+      "date": "2026-03-11",
+      "calls": 49,
+      "tokens": 13744,
+      "cost": 0.3624
+    },
+    {
+      "date": "2026-03-12",
+      "calls": 65,
+      "tokens": 18847,
+      "cost": 3.0408
+    },
+    {
+      "date": "2026-03-13",
+      "calls": 0,
+      "tokens": 0,
+      "cost": 0
+    },
+    {
+      "date": "2026-03-14",
+      "calls": 0,
+      "tokens": 0,
+      "cost": 0
+    },
+    {
+      "date": "2026-03-15",
+      "calls": 14,
+      "tokens": 9427,
+      "cost": 0.0429
+    },
+    {
+      "date": "2026-03-16",
+      "calls": 3,
+      "tokens": 23678,
+      "cost": 0.0037
+    }
+  ],
+  "total_entries": 131
+}

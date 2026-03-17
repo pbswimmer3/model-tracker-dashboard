@@ -1,0 +1,106 @@
+{
+  "report_date": "2026-03-16",
+  "period": "daily",
+  "stats": {
+    "total_calls": 15,
+    "total_tokens": 9766,
+    "total_cost": 0.0438,
+    "avg_cost_per_call": 0.002917,
+    "avg_tokens_per_call": 651
+  },
+  "model_breakdown": [
+    {
+      "model": "opus",
+      "calls": 1,
+      "tokens": 2000,
+      "cost": 0.025,
+      "input_tokens": 1250,
+      "output_tokens": 750,
+      "avg_cost_per_call": 0.025
+    },
+    {
+      "model": "kimi",
+      "calls": 10,
+      "tokens": 3616,
+      "cost": 0.009,
+      "input_tokens": 0,
+      "output_tokens": 3616,
+      "avg_cost_per_call": 0.000904
+    },
+    {
+      "model": "sonnet",
+      "calls": 1,
+      "tokens": 1200,
+      "cost": 0.0084,
+      "input_tokens": 800,
+      "output_tokens": 400,
+      "avg_cost_per_call": 0.0084
+    },
+    {
+      "model": "deepseek",
+      "calls": 1,
+      "tokens": 1800,
+      "cost": 0.0009,
+      "input_tokens": 1200,
+      "output_tokens": 600,
+      "avg_cost_per_call": 0.000924
+    },
+    {
+      "model": "haiku",
+      "calls": 1,
+      "tokens": 450,
+      "cost": 0.0003,
+      "input_tokens": 300,
+      "output_tokens": 150,
+      "avg_cost_per_call": 0.000262
+    },
+    {
+      "model": "gemini",
+      "calls": 1,
+      "tokens": 700,
+      "cost": 0.0001,
+      "input_tokens": 500,
+      "output_tokens": 200,
+      "avg_cost_per_call": 0.00013
+    }
+  ],
+  "task_breakdown": [
+    {
+      "task_type": "analysis",
+      "calls": 1,
+      "tokens": 2000,
+      "cost": 0.025
+    },
+    {
+      "task_type": "openclaw",
+      "calls": 10,
+      "tokens": 3616,
+      "cost": 0.009
+    },
+    {
+      "task_type": "coding",
+      "calls": 1,
+      "tokens": 1200,
+      "cost": 0.0084
+    },
+    {
+      "task_type": "reasoning",
+      "calls": 1,
+      "tokens": 1800,
+      "cost": 0.0009
+    },
+    {
+      "task_type": "conversation",
+      "calls": 1,
+      "tokens": 450,
+      "cost": 0.0003
+    },
+    {
+      "task_type": "search",
+      "calls": 1,
+      "tokens": 700,
+      "cost": 0.0001
+    }
+  ],
+  "total_entries": 15
+}

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Model Cost Tracker</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0d14;--surface:#14141f;--card:#1c1c2e;--border:#2a2a45;
+  --text:#e8e8f0;--muted:#666680;--accent:#7c7cff;
+  --sonnet:#4a90ff;--kimi:#44ddaa;--gemini:#ffcc44;
+  --opus:#ff6644;--deepseek:#cc44ff;--haiku:#44ffcc;--other:#888;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── Header ── */
+.header{background:linear-gradient(135deg,#1a1a30,#12122a);padding:18px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:20px;font-weight:700;color:#fff}
+.header h1 span{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:16px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#44ff88;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.refresh-info{font-size:12px;color:var(--muted)}
+.range-pills{display:flex;gap:6px}
+.pill{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;transition:all .15s}
+.pill.active{background:#3a3a6a;color:#fff;border-color:var(--accent)}
+
+/* ── Stat Cards ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 32px 0}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.stat-card .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat-card .value{font-size:32px;font-weight:700;color:#fff;line-height:1}
+.stat-card .sub{font-size:12px;color:var(--muted);margin-top:6px}
+.stat-card .delta{font-size:12px;margin-top:4px}
+.delta.up{color:#ff6644}.delta.down{color:#44dd88}.delta.neutral{color:var(--muted)}
+.stat-card.highlight{border-color:var(--accent);background:linear-gradient(135deg,#1c1c2e,#1e1e40)}
+
+/* ── Charts Grid ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 32px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.chart-card.wide{grid-column:span 2}
+.chart-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.chart-area{width:100%;position:relative}
+
+/* ── Table ── */
+.table-section{padding:0 32px 32px}
+.table-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.table-header h3{font-size:14px;font-weight:600;color:#fff}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 16px;text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .1s}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody td{padding:10px 16px;font-size:13px}
+.model-badge{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.model-dot{width:8px;height:8px;border-radius:50%}
+.cost-cell{font-family:monospace;font-size:13px}
+
+/* ── Legend ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* ── Projection Bar ── */
+.proj-bar-wrap{background:#1a1a30;border-radius:6px;height:10px;overflow:hidden;margin:10px 0 6px}
+.proj-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),#ff6644);transition:width .5s}
+
+/* ── Loading ── */
+.loading{display:flex;align-items:center;justify-content:center;height:200px;color:var(--muted);font-size:14px}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── Tooltip ── */
+.d3-tip{position:fixed;background:var(--card);border:1px solid var(--accent);border-radius:6px;padding:8px 12px;pointer-events:none;opacity:0;font-size:12px;z-index:999;transition:opacity .15s}
+.d3-tip strong{color:#fff;display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🤖 AI Cost <span>Tracker</span></h1>
+  </div>
+  <div class="header-right">
+    <div class="range-pills">
+      <div class="pill active" data-days="7">7D</div>
+      <div class="pill" data-days="14">14D</div>
+      <div class="pill" data-days="30">30D</div>
+    </div>
+    <div class="live-dot"></div>
+    <span class="refresh-info" id="refresh-info">Loading…</span>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="label">Today's Cost</div>
+    <div class="value" id="s-today-cost">—</div>
+    <div class="sub" id="s-today-calls">— calls</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">This Week</div>
+    <div class="value" id="s-week-cost">—</div>
+    <div class="sub" id="s-week-calls">— calls · — tokens</div>
+  </div>
+  <div class="stat-card highlight">
+    <div class="label">Month to Date</div>
+    <div class="value" id="s-month-cost">—</div>
+    <div class="sub">
+      <div class="proj-bar-wrap"><div class="proj-bar-fill" id="s-proj-bar" style="width:0%"></div></div>
+    </div>
+    <div class="delta neutral" id="s-projected">Projected: —</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Cheapest Model</div>
+    <div class="value" id="s-cheapest" style="font-size:22px;margin-top:4px">—</div>
+    <div class="sub" id="s-cheapest-sub">vs most used</div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-grid">
+
+  <!-- Daily Cost Line Chart -->
+  <div class="chart-card wide">
+    <div class="chart-title">Daily Cost (USD)</div>
+    <div class="chart-sub">Spending per day by model</div>
+    <div class="chart-area" id="chart-daily" style="height:200px"></div>
+    <div class="legend" id="legend-daily"></div>
+  </div>
+
+  <!-- Model Donut -->
+  <div class="chart-card">
+    <div class="chart-title">Cost by Model</div>
+    <div class="chart-sub">Breakdown for selected period</div>
+    <div class="chart-area" id="chart-donut" style="height:220px"></div>
+  </div>
+
+  <!-- Calls Bar Chart -->
+  <div class="chart-card">
+    <div class="chart-title">Calls per Day</div>
+    <div class="chart-sub">Volume by model (stacked)</div>
+    <div class="chart-area" id="chart-calls" style="height:220px"></div>
+  </div>
+
+</div>
+
+<!-- Recent Calls Table -->
+<div class="table-section">
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Recent API Calls</h3>
+      <span style="font-size:12px;color:var(--muted)" id="table-count">—</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Model</th>
+          <th>Tokens In</th>
+          <th>Tokens Out</th>
+          <th>Cost</th>
+          <th>Session</th>
+        </tr>
+      </thead>
+      <tbody id="recent-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d3-tip" id="tip"></div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+let activeDays = 7;
+let summary = null, dailyData = [], modelData = [], recentData = [];
+
+const MODEL_COLORS = {
+  sonnet:'#4a90ff', kimi:'#44ddaa', gemini:'#ffcc44',
+  opus:'#ff6644', deepseek:'#cc44ff', haiku:'#44ffcc',
+  gpt:'#ff9944', claude:'#4a90ff'
+};
+
+function modelColor(m) {
+  const k = Object.keys(MODEL_COLORS).find(k => m && m.toLowerCase().includes(k));
+  return k ? MODEL_COLORS[k] : '#888899';
+}
+
+function fmt$(n) { return '$' + (n||0).toFixed(n >= 1 ? 2 : 4); }
+function fmtK(n) { return n >= 1000 ? (n/1000).toFixed(1)+'K' : (n||0).toString(); }
+function fmtTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}) +
+    ' ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchAll() {
+  const [s, d, m, r] = await Promise.all([
+    fetch('/api/summary').then(r=>r.json()),
+    fetch(`/api/daily?days=${activeDays}`).then(r=>r.json()),
+    fetch(`/api/models?days=${activeDays}`).then(r=>r.json()),
+    fetch('/api/recent?limit=100').then(r=>r.json()),
+  ]);
+  summary = s; dailyData = d; modelData = m; recentData = r;
+  render();
+  document.getElementById('refresh-info').textContent =
+    'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  renderStats();
+  renderDailyLine();
+  renderDonut();
+  renderCallsBar();
+  renderTable();
+}
+
+function renderStats() {
+  const s = summary;
+  document.getElementById('s-today-cost').textContent = fmt$(s.today.cost);
+  document.getElementById('s-today-calls').textContent =
+    s.today.calls + ' calls · ' + fmtK(s.today.tokens) + ' tokens';
+
+  document.getElementById('s-week-cost').textContent = fmt$(s.week.cost);
+  document.getElementById('s-week-calls').textContent =
+    s.week.calls + ' calls · ' + fmtK(s.week.tokens) + ' tokens';
+
+  document.getElementById('s-month-cost').textContent = fmt$(s.month.cost);
+  document.getElementById('s-projected').textContent =
+    'Projected: ' + fmt$(s.month.projected) + ' / month';
+
+  const pct = Math.min(100, (s.month.cost / Math.max(s.month.projected, 0.01)) * 100);
+  document.getElementById('s-proj-bar').style.width = pct + '%';
+
+  // Cheapest model (by avg cost/call)
+  if (modelData.length) {
+    const cheap = [...modelData].sort((a,b)=>a.avg_cost_per_call - b.avg_cost_per_call)[0];
+    const expensive = [...modelData].sort((a,b)=>b.avg_cost_per_call - a.avg_cost_per_call)[0];
+    document.getElementById('s-cheapest').textContent = cheap.model;
+    document.getElementById('s-cheapest-sub').textContent =
+      fmt$(cheap.avg_cost_per_call) + '/call vs ' + expensive.model + ' ' + fmt$(expensive.avg_cost_per_call) + '/call';
+  }
+}
+
+// Daily line chart — per-model stacked area
+function renderDailyLine() {
+  const el = document.getElementById('chart-daily');
+  el.innerHTML = '';
+  if (!dailyData.length) return;
+
+  // We only have total per day — draw a simple line + area
+  const W = el.clientWidth, H = 200;
+  const m = {top:10,right:20,bottom:30,left:50};
+  const iW = W-m.left-m.right, iH = H-m.top-m.bottom;
+
+  const svg = d3.select('#chart-daily').append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const data = dailyData.filter(d => d.calls > 0 || true); // show all days
+  const x = d3.scaleBand().domain(data.map(d=>d.date)).range([0,iW]).padding(0.1);
+  const y = d3.scaleLinear().domain([0, d3.max(data,d=>d.cost)*1.15||1]).range([iH,0]);
+
+  // Grid
+  g.selectAll('.gy').data(y.ticks(4)).enter().append('line')
+    .attr('x1',0).attr('x2',iW).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#2a2a45').attr('stroke-dasharray','3,4');
+
+  // Y axis
+  g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d=>fmt$(d)))
+    .selectAll('text,line,path').style('fill','#666').style('stroke','#2a2a45').style('font-size','11px');
+
+  // X axis (show every 3rd label if many)
+  const skip = data.length > 14 ? 3 : 1;
+  g.append('g').attr('transform',`translate(0,${iH})`)
+    .call(d3.axisBottom(x).tickValues(data.filter((_,i)=>i%skip===0).map(d=>d.date))
+      .tickFormat(d => d.slice(5)))
+    .selectAll('text,line,path').style('fill','#666').style('stroke','none').style('font-size','10px');
+
+  // Area
+  const area = d3.area().x(d=>x(d.date)+x.bandwidth()/2).y0(iH).y1(d=>y(d.cost)).curve(d3.curveCatmullRom);
+  g.append('path').datum(data).attr('d',area)
+    .attr('fill',`url(#grad)`).attr('opacity',.25);
+
+  // Gradient
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id','grad').attr('gradientUnits','userSpaceOnUse')
+    .attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',iH);
+  grad.append('stop').attr('offset','0%').attr('stop-color','#7c7cff').attr('stop-opacity',.7);
+  grad.append('stop').attr('offset','100%').attr('stop-color','#7c7cff').attr('stop-opacity',0);
+
+  // Line
+  const line = d3.line().x(d=>x(d.date)+x.bandwidth()/2).y(d=>y(d.cost)).curve(d3.curveCatmullRom);
+  g.append('path').datum(data).attr('d',line)
+    .attr('fill','none').attr('stroke','#7c7cff').attr('stroke-width',2.5);
+
+  // Dots
+  const tip = document.getElementById('tip');
+  g.selectAll('.dot').data(data.filter(d=>d.cost>0)).enter().append('circle')
+    .attr('cx',d=>x(d.date)+x.bandwidth()/2).attr('cy',d=>y(d.cost)).attr('r',4)
+    .attr('fill','#7c7cff').attr('stroke','#fff').attr('stroke-width',1.5)
+    .style('cursor','pointer')
+    .on('mousemove',(e,d)=>{
+      tip.style.opacity=1;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+8)+'px';
+      tip.innerHTML=`<strong>${d.date}</strong>${fmt$(d.cost)} · ${d.calls} calls · ${fmtK(d.tokens)} tokens`;
+    }).on('mouseleave',()=>tip.style.opacity=0);
+}
+
+// Donut chart — cost by model
+function renderDonut() {
+  const el = document.getElementById('chart-donut');
+  el.innerHTML = '';
+  if (!modelData.length) return;
+
+  const W = el.clientWidth, H = 220;
+  const R = Math.min(W,H)/2 - 20;
+  const svg = d3.select('#chart-donut').append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${W/2},${H/2})`);
+
+  const pie = d3.pie().value(d=>d.cost).sort(null);
+  const arc = d3.arc().innerRadius(R*.55).outerRadius(R);
+  const arcHover = d3.arc().innerRadius(R*.55).outerRadius(R*1.06);
+
+  const tip = document.getElementById('tip');
+  const total = d3.sum(modelData, d=>d.cost);
+
+  g.selectAll('.slice').data(pie(modelData)).enter().append('path')
+    .attr('d',arc).attr('fill',d=>modelColor(d.data.model))
+    .attr('stroke','#0d0d14').attr('stroke-width',2)
+    .style('cursor','pointer')
+    .on('mousemove',(e,d)=>{
+      d3.select(e.currentTarget).attr('d',arcHover);
+      tip.style.opacity=1;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+8)+'px';
+      const pct = ((d.data.cost/total)*100).toFixed(1);
+      tip.innerHTML=`<strong>${d.data.model}</strong>${fmt$(d.data.cost)} (${pct}%) · ${d.data.calls} calls`;
+    }).on('mouseleave',(e)=>{
+      d3.select(e.currentTarget).attr('d',arc);
+      tip.style.opacity=0;
+    });
+
+  // Center label
+  const topModel = modelData[0];
+  g.append('text').attr('text-anchor','middle').attr('dy','-0.3em')
+    .attr('fill','#fff').attr('font-size','20px').attr('font-weight','700')
+    .text(fmt$(total));
+  g.append('text').attr('text-anchor','middle').attr('dy','1.2em')
+    .attr('fill','#666').attr('font-size','11px').text('total');
+
+  // Legend below
+  const leg = d3.select('#chart-donut').append('div').attr('class','legend')
+    .style('padding','0 8px').style('flex-wrap','wrap');
+  modelData.forEach(m=>{
+    const item = leg.append('div').attr('class','legend-item');
+    item.append('div').attr('class','legend-dot')
+      .style('background',modelColor(m.model)).style('flex-shrink','0');
+    item.append('span').text(m.model + ' ' + fmt$(m.cost));
+  });
+}
+
+// Stacked bar — calls per day
+function renderCallsBar() {
+  const el = document.getElementById('chart-calls');
+  el.innerHTML = '';
+  if (!dailyData.length || !modelData.length) return;
+
+  // Use daily totals (calls) — simple bar chart
+  const W = el.clientWidth, H = 220;
+  const m = {top:10,right:10,bottom:30,left:40};
+  const iW = W-m.left-m.right, iH = H-m.top-m.bottom;
+
+  const data = dailyData;
+  const svg = d3.select('#chart-calls').append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const x = d3.scaleBand().domain(data.map(d=>d.date)).range([0,iW]).padding(0.2);
+  const y = d3.scaleLinear().domain([0,(d3.max(data,d=>d.calls)||1)*1.15]).range([iH,0]);
+
+  g.selectAll('.gy').data(y.ticks(4)).enter().append('line')
+    .attr('x1',0).attr('x2',iW).attr('y1',d=>y(d)).attr('y2',d=>y(d))
+    .attr('stroke','#2a2a45').attr('stroke-dasharray','3,4');
+
+  g.append('g').call(d3.axisLeft(y).ticks(4))
+    .selectAll('text,line,path').style('fill','#666').style('stroke','none').style('font-size','11px');
+
+  const skip = data.length > 14 ? 3 : 1;
+  g.append('g').attr('transform',`translate(0,${iH})`)
+    .call(d3.axisBottom(x).tickValues(data.filter((_,i)=>i%skip===0).map(d=>d.date))
+      .tickFormat(d=>d.slice(5)))
+    .selectAll('text,line,path').style('fill','#666').style('stroke','none').style('font-size','10px');
+
+  const tip = document.getElementById('tip');
+  g.selectAll('.bar').data(data).enter().append('rect')
+    .attr('x',d=>x(d.date)).attr('width',x.bandwidth())
+    .attr('y',d=>y(d.calls)).attr('height',d=>iH-y(d.calls))
+    .attr('fill','#4a90ff').attr('opacity',.8).attr('rx',2)
+    .style('cursor','pointer')
+    .on('mousemove',(e,d)=>{
+      tip.style.opacity=1;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+8)+'px';
+      tip.innerHTML=`<strong>${d.date}</strong>${d.calls} calls · ${fmtK(d.tokens)} tokens · ${fmt$(d.cost)}`;
+    }).on('mouseleave',()=>tip.style.opacity=0);
+}
+
+// Recent table
+function renderTable() {
+  const tbody = document.getElementById('recent-tbody');
+  tbody.innerHTML = '';
+  document.getElementById('table-count').textContent = `Last ${recentData.length} calls`;
+
+  recentData.slice(0,50).forEach(e=>{
+    const tr = document.createElement('tr');
+    const col = modelColor(e.model || e.full_model);
+    tr.innerHTML = `
+      <td style="color:#888;font-size:12px">${fmtTime(e.timestamp)}</td>
+      <td><span class="model-badge"><span class="model-dot" style="background:${col}"></span>${e.model||'?'}</span></td>
+      <td class="cost-cell" style="color:#aaa">${fmtK(e.input_tokens||0)}</td>
+      <td class="cost-cell" style="color:#aaa">${fmtK(e.output_tokens||0)}</td>
+      <td class="cost-cell" style="color:#fff;font-weight:600">${fmt$(e.estimated_cost_usd)}</td>
+      <td style="font-size:11px;color:#555;font-family:monospace">${(e.session_id||'').slice(0,8)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Controls ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    activeDays = parseInt(p.dataset.days);
+    fetchAll();
+  });
+});
+
+// ── Auto Refresh ──────────────────────────────────────────────────────────────
+fetchAll();
+setInterval(fetchAll, 60000); // refresh every 60s
+</script>
+</body>
+</html>

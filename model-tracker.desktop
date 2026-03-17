@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AI Cost Tracker
+Comment=Live AI model usage and cost dashboard
+Exec=bash /home/prad/.openclaw/workspace/model-tracker/launch.sh
+Icon=utilities-system-monitor
+Terminal=false
+Categories=Utility;
+StartupNotify=true

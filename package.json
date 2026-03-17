@@ -1,0 +1,16 @@
+{
+  "name": "model-usage-tracker",
+  "version": "1.0.0",
+  "description": "Track AI model usage and costs across providers",
+  "main": "tracker.js",
+  "scripts": {
+    "start": "node tracker.js",
+    "report": "node report.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "date-fns": "^4.1.0",
+    "express": "^5.2.1"
+  }
+}

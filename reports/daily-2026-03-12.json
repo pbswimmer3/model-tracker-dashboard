@@ -1,0 +1,14 @@
+{
+  "report_date": "2026-03-12",
+  "period": "daily",
+  "stats": {
+    "total_calls": 0,
+    "total_tokens": 0,
+    "total_cost": 0,
+    "avg_cost_per_call": 0,
+    "avg_tokens_per_call": 0
+  },
+  "model_breakdown": [],
+  "task_breakdown": [],
+  "total_entries": 0
+}

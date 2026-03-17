@@ -1,0 +1,44 @@
+╔══════════════════════════════════════════════════════════════╗
+║ Daily AI Model Usage Report  ║
+╚══════════════════════════════════════════════════════════════╝
+
+📊 OVERALL STATISTICS
+────────────────────────────────────────────────────────────
+Total API Calls: 15
+Total Tokens: 9,766
+Total Cost: $0.0438
+Avg Cost/Call: $0.0029
+Avg Tokens/Call: 651
+
+🤖 MODEL BREAKDOWN
+────────────────────────────────────────────────────────────
+1. opus        : $0.0250 (57.1%)
+    Calls: 1, Tokens: 2,000
+2. kimi        : $0.0090 (20.5%)
+    Calls: 10, Tokens: 3,616
+3. sonnet      : $0.0084 (19.2%)
+    Calls: 1, Tokens: 1,200
+4. deepseek    : $0.0009 (2.1%)
+    Calls: 1, Tokens: 1,800
+5. haiku       : $0.0003 (0.7%)
+    Calls: 1, Tokens: 450
+6. gemini      : $0.0001 (0.2%)
+    Calls: 1, Tokens: 700
+
+📝 TASK TYPE BREAKDOWN
+────────────────────────────────────────────────────────────
+1. analysis       : $0.0250 (57.1%)
+    Calls: 1
+2. openclaw       : $0.0090 (20.5%)
+    Calls: 10
+3. coding         : $0.0084 (19.2%)
+    Calls: 1
+4. reasoning      : $0.0009 (2.1%)
+    Calls: 1
+5. conversation   : $0.0003 (0.7%)
+    Calls: 1
+6. search         : $0.0001 (0.2%)
+    Calls: 1
+
+
+Generated: 2026-03-16T06:59:01.274Z
