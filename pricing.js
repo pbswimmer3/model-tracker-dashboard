@@ -15,6 +15,9 @@ const PRICING = {
   'deepseek/deepseek-coder': { input: 0.56, output: 0.42 },
   
   // OpenAI
+  'openai/gpt-5.4': { input: 2.50, output: 15.00 },
+  'openai/gpt-5.4-mini': { input: 0.75, output: 4.50 },
+  'openai/gpt-5.4-nano': { input: 0.20, output: 1.25 },
   'openai/gpt-4o': { input: 2.50, output: 10.00 },
   'openai/gpt-4o-mini': { input: 0.15, output: 0.60 },
 

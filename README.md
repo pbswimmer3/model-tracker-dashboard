@@ -63,6 +63,9 @@ node tracker.js report weekly
 | Kimi K1.5 (Moonshot) | $0.50 | $2.00 |
 | Gemini 2.5 Flash | $0.10 | $0.40 |
 | DeepSeek Chat | $0.56 | $0.42 |
+| GPT-5.4 | $2.50 | $15.00 |
+| GPT-5.4-mini | $0.75 | $4.50 |
+| GPT-5.4-nano | $0.20 | $1.25 |
 | GPT-4o | $2.50 | $10.00 |
 | GPT-4o mini | $0.15 | $0.60 |
 
@@ -133,6 +136,24 @@ Each entry in the logs looks like this:
 cd /home/prad/.openclaw/workspace/model-tracker
 node test.js
 ```
+
+---
+
+## Adding new models
+
+When OpenClaw adds support for new models, you need to add their pricing to the tracker:
+
+1. **Edit `pricing.js`** — Add an entry to the `PRICING` object:
+   ```javascript
+   'provider/model-name': { input: X.XX, output: X.XX }
+   ```
+   Use the full model ID (e.g., `'openai/gpt-5.4'` not just `'gpt-5.4'`).
+
+2. **Update the README** — Add the model to the pricing table above.
+
+3. **Restart the dashboard** (if running) — The pricing API updates immediately; refresh your browser.
+
+Costs are per 1 million tokens. Find official pricing at the provider's API docs (e.g., openai.com/api/pricing).
 
 ---
 
