@@ -11,6 +11,7 @@ const PRICING = {
   'google/gemini-2.0-flash': { input: 0.10, output: 0.40 },
   
   // DeepSeek
+  'deepseek/deepseek-v4-pro': { input: 0.56, output: 0.42 },
   'deepseek/deepseek-chat': { input: 0.56, output: 0.42 },
   'deepseek/deepseek-coder': { input: 0.56, output: 0.42 },
   
@@ -22,6 +23,7 @@ const PRICING = {
   'openai/gpt-4o-mini': { input: 0.15, output: 0.60 },
 
   // Moonshot
+  'moonshot/kimi-k2.6': { input: 0.60, output: 2.50 },
   'moonshot/kimi-k2.5': { input: 0.60, output: 2.50 },
   'moonshot/kimi-k1.5': { input: 0.50, output: 2.00 },
 

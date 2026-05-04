@@ -59,9 +59,11 @@ node tracker.js report weekly
 | Claude Opus 4.6 | $5.00 | $25.00 |
 | Claude Sonnet 4.6 | $3.00 | $15.00 |
 | Claude Haiku 4.6 | $0.25 | $1.25 |
+| Kimi K2.6 (Moonshot) | $0.60 | $2.50 |
 | Kimi K2.5 (Moonshot) | $0.60 | $2.50 |
 | Kimi K1.5 (Moonshot) | $0.50 | $2.00 |
 | Gemini 2.5 Flash | $0.10 | $0.40 |
+| DeepSeek V4 Pro | $0.56 | $0.42 |
 | DeepSeek Chat | $0.56 | $0.42 |
 | GPT-5.4 | $2.50 | $15.00 |
 | GPT-5.4-mini | $0.75 | $4.50 |
