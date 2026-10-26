@@ -1,5 +1,7 @@
 # Model Tracker
 
+> **Status: disabled (2026-10-25).** The tracker (`tracker.js sync` hourly, plus daily, weekly and monthly reports) ran from cron on a self-hosted VM. It has not run since that VM was shut down on 2026-05-11, and the VM was retired on 2026-10-25. The code stays here for reference.
+
 Model Tracker automatically records every AI model call that OpenClaw makes, calculates what each call cost, and lets you view usage reports whenever you want. No manual setup is needed — it runs in the background and syncs itself every hour.
 
 ---
